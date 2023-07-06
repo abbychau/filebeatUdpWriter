@@ -1,4 +1,4 @@
-package utils
+package writer
 
 import (
 	"net"
@@ -18,30 +18,30 @@ type ginHands struct {
 	ClientIP   string
 	MsgStr     string
 }
-type udpWriter struct {
+type Writer struct {
 	Conn *net.UDPConn
 }
 
-func (w udpWriter) Write(p []byte) (n int, err error) {
+func (w Writer) Write(p []byte) (n int, err error) {
 	return w.Conn.Write(p)
 }
 
-func CreateUdpWriter(address string) (zerolog.Logger, error) {
+func CreateWriter(address string) (zerolog.Logger, error) {
 	//instruct logger to pump to udp , for zerolog.New()
 	udpAddr, err := net.ResolveUDPAddr("udp", address)
 	if err != nil {
 		//info log
-		log.Info().Msg("Cannot resolve udp address for FileBeat, using stdout instead.")
+		log.Info().Msg("Cannot resolve udp address, using stdout instead.")
 		return zerolog.Logger{}, err
 	}
 	udpConn, err := net.DialUDP("udp", nil, udpAddr)
 	if err != nil {
 		//info log
-		log.Info().Msg("Cannot dial udp address for FileBeat, using stdout instead.")
+		log.Info().Msg("Cannot dial udp address, using stdout instead.")
 		return zerolog.Logger{}, err
 	}
 
-	log := zerolog.New(udpWriter{udpConn}).With().Timestamp().Logger()
+	log := zerolog.New(Writer{udpConn}).With().Timestamp().Logger()
 	return log, nil
 }
 
