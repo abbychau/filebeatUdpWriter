@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// ginHands is a struct for gin handler
 type ginHands struct {
 	SerName    string
 	Path       string
@@ -18,14 +19,18 @@ type ginHands struct {
 	ClientIP   string
 	MsgStr     string
 }
+
+// Writer is a struct for zerolog writer
 type Writer struct {
 	Conn *net.UDPConn
 }
 
+// Write is a method for zerolog writer
 func (w Writer) Write(p []byte) (n int, err error) {
 	return w.Conn.Write(p)
 }
 
+// CreateLogger is a function for creating zerolog logger
 func CreateLogger(address string) (zerolog.Logger, error) {
 	//instruct logger to pump to udp , for zerolog.New()
 	udpAddr, err := net.ResolveUDPAddr("udp", address)
@@ -45,6 +50,7 @@ func CreateLogger(address string) (zerolog.Logger, error) {
 	return log, nil
 }
 
+// GinHandle is a function for gin handler
 func GinHandle(serName string, logger zerolog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		t := time.Now()

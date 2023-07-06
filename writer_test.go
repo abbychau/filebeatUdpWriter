@@ -15,10 +15,10 @@ func TestWriter_Write(t *testing.T) {
 	r := gin.New()
 
 	//make a chan for udp server
-	chann := make(chan string)
-	quitn := make(chan bool)
+	chan1 := make(chan string)
+	quitChan := make(chan bool)
 	//start a dummy udp server
-	go startUdpServer(chann, quitn)
+	go startUdpServer(chan1, quitChan)
 
 	udpLogger, _ := CreateLogger("localhost:18125") //you can catch the error here
 	//asset the logger is not nil
@@ -31,11 +31,11 @@ func TestWriter_Write(t *testing.T) {
 	udpLogger.Info().Msg(testMsg)
 
 	//send quit signal to udp server
-	quitn <- true
+	quitChan <- true
 
 	time.Sleep(1 * time.Second)
 	//read from chan
-	msg := <-chann
+	msg := <-chan1
 	//check if msg contains testMsg
 	if strings.Contains(msg, testMsg) == false {
 		fmt.Println(msg)
@@ -46,8 +46,8 @@ func TestWriter_Write(t *testing.T) {
 
 func startUdpServer(
 	//output chan
-	chann chan string,
-	quitchan chan bool,
+	chan1 chan string,
+	quitChan chan bool,
 ) {
 	//start a dummy udp server
 
@@ -65,9 +65,9 @@ func startUdpServer(
 
 	//loop
 	for {
-		//check if quitchan has a value
+		//check if quitChan has a value
 		select {
-		case <-quitchan:
+		case <-quitChan:
 
 			//read incoming udp packets
 			buffer := make([]byte, 1024)
@@ -77,13 +77,14 @@ func startUdpServer(
 			}
 
 			//log.Info().Str("address", addr.String()).Msg("received: " + string(buffer[:n]))
-			//push to channel
-			chann <- string(buffer[:n])
+			//push to chan1el
+			chan1 <- string(buffer[:n])
 
 			log.Info().Msg("quitting udp server")
 			return
 		default:
-			//do nothing
+			// avoid spinning
+			time.Sleep(100 * time.Millisecond)
 		}
 
 	}
