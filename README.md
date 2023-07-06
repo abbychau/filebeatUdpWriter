@@ -16,7 +16,7 @@ r.Use(filebeatUdpWriter.GinHandle("gin", log.Logger))
 
 # Why this Logger?
 
-1. Compatible with ZeroLog and Gin so that you can log in json format for Gin requests.
+1. Compatible with ZeroLog and Gin so that you can log in JSON format for Gin requests.
 2. UDP is fast, non-blocking and does not require a file handler.
 3. No more docker volume mounting.
 

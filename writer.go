@@ -58,11 +58,8 @@ func GinHandle(serName string, logger zerolog.Logger) gin.HandlerFunc {
 		path := c.Request.URL.Path
 		raw := c.Request.URL.RawQuery
 		c.Next()
+
 		// after request
-		// latency := time.Since(t)
-		// clientIP := c.ClientIP()
-		// method := c.Request.Method
-		// statusCode := c.Writer.Status()
 		if raw != "" {
 			path = path + "?" + raw
 		}
