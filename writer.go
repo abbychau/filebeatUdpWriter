@@ -26,7 +26,7 @@ func (w Writer) Write(p []byte) (n int, err error) {
 	return w.Conn.Write(p)
 }
 
-func CreateWriter(address string) (zerolog.Logger, error) {
+func CreateLogger(address string) (zerolog.Logger, error) {
 	//instruct logger to pump to udp , for zerolog.New()
 	udpAddr, err := net.ResolveUDPAddr("udp", address)
 	if err != nil {
